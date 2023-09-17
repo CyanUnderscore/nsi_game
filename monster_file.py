@@ -6,12 +6,12 @@ class Monster:
     def __init__(self, pos):
         self.max_health = 100
         self.health = self.max_health
-        self.damage = 30
+        self.damage = 2
         self.pos = pos
         self.size = 20
         self.speed = 5
         self.rect = pg.Rect((pos.x - self.size/2, pos.y - self.size/2), (self.size*2,self.size*2))
-        self.health_bar = HealthBar
+        self.health_bar = HealthBar()
 
     def update(self, vector):
         self.pos += vector * self.speed 

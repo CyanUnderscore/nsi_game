@@ -15,10 +15,13 @@ class Player:
         self.alive = True
         self.pos = pg.Vector2(screen.get_width() / 2, screen.get_height() / 2)
         self.rect = pg.Rect((self.pos.x - self.size/2, self.pos.y - self.size/2), (self.size*2,self.size*2))
-        self.health_bar = HealthBar
+        self.health_bar = HealthBar()
 
     def take_damage(self, damage):
         self.health -= damage
     
     def heal(self, heal):
         self.health += heal
+    
+    def update(self):
+        self.rect.center = self.pos

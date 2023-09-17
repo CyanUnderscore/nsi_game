@@ -5,11 +5,12 @@ from player_file import Player
 from bullet_file import Bullet
 from monster_file import Monster
 from heath_bar import HealthBar
+from medpack_file import MedPack
 
 
 #pygame setup
 pg.init()
-screen = pg.display.set_mode((1280, 720))
+screen = pg.display.set_mode((1920, 1080))
 clock = pg.time.Clock()
 running = True
 player = Player(screen=screen)
@@ -23,10 +24,11 @@ spawn = [
 playing = 1
 bullets = []
 monsters = []
+medpacks = []
 i = 0
+acceleration = 0
 
 playButton_Rect = pg.Rect((screen.get_width()/2, screen.get_height()/2), (screen.get_height()/6, screen.get_width()/6))
-
 
 def GetVector(origin, target):
     target -= origin
@@ -88,6 +90,14 @@ while running:
         screen.blit(background, (0, 512))
         screen.blit(background, (512, 512))
         screen.blit(background, (1024, 512))
+        screen.blit(background, (0, 1024))
+        screen.blit(background, (512, 1024))
+        screen.blit(background, (1024, 1024))
+
+        screen.blit(background, (1024, 512))
+        screen.blit(background, (1536, 512))
+        screen.blit(background, (1536, 0))
+
 
         pg.draw.circle(screen, "white", player.pos, player.size)
         (bg, fg) = player.health_bar.generate(player) 
@@ -128,14 +138,27 @@ while running:
             #pg.draw.rect(screen, "purple", monster.rect)
             i+=1
         
+        i = 0
+        for medpack in medpacks:
+            if pg.Rect.colliderect(medpack.rect, player.rect):
+                player.heal(medpack.power)
+                medpacks.pop(i)
+            pg.draw.circle(screen, "green", medpack.pos, medpack.size)
+            #pg.draw.rect(screen, "purple", monster.rect)
+            i+=1
+        
         player.update()
-
+        print(player.pos)
         pg.display.flip() #register changes
 
         if n%(60*2) == 0:
             monsters.append(Monster(spawn[randint(0,3)].copy()))
             #monsters.append(Monster(pg.Vector2(1200, 800)))
 
-        
+        if n%(60*8) == 0:
+            medpacks.append(MedPack(pg.Vector2(x=randint(0, 1500), y=randint(0,800))))
+
+        if n%(60*5) == 0:
+            acceleration += 1
         n += 1
-        clock.tick(60) # set the fps of the game 
+        clock.tick(60+ 5 * acceleration) # set the fps of the game 

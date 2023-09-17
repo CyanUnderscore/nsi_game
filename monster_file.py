@@ -6,7 +6,7 @@ class Monster:
     def __init__(self, pos):
         self.max_health = 100
         self.health = self.max_health
-        self.damage = 2
+        self.damage = 1
         self.pos = pos
         self.size = 20
         self.speed = 5

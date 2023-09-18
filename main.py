@@ -17,9 +17,9 @@ player = Player(screen=screen)
 background = pg.image.load("diego-lopez-groundtiles.jpg")
 spawn = [
     pg.Vector2(0,0),
-    pg.Vector2(1280,0),
-    pg.Vector2(0,800),
-    pg.Vector2(1280,800)
+    pg.Vector2(screen.get_width(),0),
+    pg.Vector2(0,screen.get_height()),
+    pg.Vector2(screen.get_width(),screen.get_height())
 ]
 playing = 1
 bullets = []

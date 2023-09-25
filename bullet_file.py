@@ -9,3 +9,5 @@ class Bullet:
     def update(self):
         self.pos += self.vector * self.speed 
         self.rect.center = self.pos
+    
+    

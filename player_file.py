@@ -16,12 +16,22 @@ class Player:
         self.pos = pg.Vector2(screen.get_width() / 2, screen.get_height() / 2)
         self.rect = pg.Rect((self.pos.x - self.size/2, self.pos.y - self.size/2), (self.size*2,self.size*2))
         self.health_bar = HealthBar()
+        self.shot_num = 1
+        
 
     def take_damage(self, damage):
         self.health -= damage
     
     def heal(self, heal):
         self.health += heal
+
+    def upgrade_shot(self, power):
+        self.shot_num += power
+        self.range += 10 * power
+
+    def upgrade_pow(self, power):
+        self.damage += power*5
+        self.shot_size += power*3
     
     def update(self):
         self.rect.center = self.pos

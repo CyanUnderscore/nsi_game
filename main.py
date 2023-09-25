@@ -6,6 +6,7 @@ from bullet_file import Bullet
 from monster_file import Monster
 from heath_bar import HealthBar
 from medpack_file import MedPack
+from power_up import Power_up
 
 
 #pygame setup
@@ -21,10 +22,13 @@ spawn = [
     pg.Vector2(0,screen.get_height()),
     pg.Vector2(screen.get_width(),screen.get_height())
 ]
+
 playing = 1
 bullets = []
 monsters = []
 medpacks = []
+shot_ups = []
+power_ups = []
 i = 0
 acceleration = 0
 
@@ -44,6 +48,22 @@ def Positive(x):
         return x*-1
     return x
 n=0
+
+def Gestion(liste, couleur, id):
+    i = 0
+    for arg in liste:
+        if pg.Rect.colliderect(arg.rect, player.rect):
+            match id:
+                case 1:
+                    player.heal(arg.power)
+                case 2:
+                    player.upgrade_pow(arg.power)
+                case 3:
+                    player.upgrade_shot(arg.power)
+            liste.pop(i)
+        pg.draw.circle(screen, couleur, arg.pos, arg.size)
+        i+=1
+
 while running:
 
     if playing == 0:
@@ -66,7 +86,13 @@ while running:
             if event.type == pg.QUIT:
                 running = False
             if event.type == pg.MOUSEBUTTONDOWN:
-                bullets.append(Bullet(player.pos.copy(), GetVector(player.pos, pg.mouse.get_pos()), player.shot_speed, player.shot_size))
+                for i in range(player.shot_num):
+                    if (i == 0):
+                        bullets.append(Bullet(player.pos.copy(), GetVector(player.pos, pg.mouse.get_pos()), player.shot_speed, player.shot_size))
+                    else:
+                        bullets.append(Bullet(player.pos.copy(), (GetVector(player.pos, pg.mouse.get_pos())+pg.Vector2(x=randint(-10-player.shot_num*2, 10+player.shot_num*2)/100,y=randint(-30, 30)/100)), player.shot_speed, player.shot_size))
+
+
 
 
         keys = pg.key.get_pressed()
@@ -114,7 +140,7 @@ while running:
             colision = pg.Rect.collidelist(bullet.rect, [monster.rect for monster in monsters])
             if colision != -1: # because return -1 if no collision
                 monsters[colision].take_damage(bullet, player.damage)
-                if len(bullets) >= 1: # looks weird but can happen when a lot of things are going on
+                if len(bullets) > i: # looks weird but can happen when a lot of things are going on
                     bullets.pop(i)
                 continue
 
@@ -138,17 +164,13 @@ while running:
             #pg.draw.rect(screen, "purple", monster.rect)
             i+=1
         
-        i = 0
-        for medpack in medpacks:
-            if pg.Rect.colliderect(medpack.rect, player.rect):
-                player.heal(medpack.power)
-                medpacks.pop(i)
-            pg.draw.circle(screen, "green", medpack.pos, medpack.size)
-            #pg.draw.rect(screen, "purple", monster.rect)
-            i+=1
-        
+        Gestion(medpacks, "green", 1)
+        Gestion(power_ups, "blue", 2)
+        Gestion(shot_ups, "red", 3)
+
+
         player.update()
-        print(player.pos)
+
         pg.display.flip() #register changes
 
         if n%(60*2) == 0:
@@ -158,7 +180,15 @@ while running:
         if n%(60*8) == 0:
             medpacks.append(MedPack(pg.Vector2(x=randint(0, 1500), y=randint(0,800))))
 
+        if n%(60*10) == 0:
+            shot_ups.append(Power_up(pg.Vector2(x=randint(0, 1500), y=randint(0,800))))
+
+        if n%(60*11) == 0:
+            power_ups.append(Power_up(pg.Vector2(x=randint(0, 1500), y=randint(0,800))))
+
+
         if n%(60*5) == 0:
             acceleration += 1
         n += 1
-        clock.tick(60+ 5 * acceleration) # set the fps of the game 
+        clock.tick(60+ 5 * acceleration) # set the fps of the game
+print(n) 
